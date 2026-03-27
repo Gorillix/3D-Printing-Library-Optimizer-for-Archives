@@ -130,16 +130,30 @@ def run_pipeline():
                 shutil.move(long_p(arc), long_p(target_file))
             stats["archives_moved"] += 1
 
-    # PHASE 2: RENAMING
-    # Normalizes folder names by removing the temporary "pkg_" prefix.
-    log("PHASE 2: CLEANING FOLDER NAMES")
+# PHASE 2: FOLDER NORMALIZATION
+    log("\nPHASE 2: FOLDER NORMALIZATION")
     for root, dirs, _ in os.walk(SEARCH_ROOT):
+        # We process folders starting with the 'pkg_' prefix
         for d in [d for d in dirs if d.startswith("pkg_")]:
+            pkg_path = os.path.join(root, d)
             clean_name = d.replace("pkg_", "")
-            for ext in ARCHIVE_EXTS: clean_name = clean_name.replace(ext, "").replace(ext.upper(), "")
+            for ext in ARCHIVE_EXTS: 
+                clean_name = clean_name.replace(ext, "").replace(ext.upper(), "")
+            
             clean_path = os.path.join(root, clean_name)
-            if not DRY_RUN_CLEANUP and not os.path.exists(long_p(clean_path)):
-                os.rename(long_p(os.path.join(root, d)), long_p(clean_path))
+            
+            if not DRY_RUN_CLEANUP:
+                if not os.path.exists(long_p(clean_path)):
+                    try: 
+                        os.rename(long_p(pkg_path), long_p(clean_path))
+                        log(f"[LIVE] Renamed: {d} -> {clean_name}")
+                    except Exception as e:
+                        log(f"[ERROR] Renaming {d}: {e}")
+                else:
+                    log(f"[NOTICE] Clean folder already exists for {d}. Skipping.")
+            else:
+                # This only prints if DRY_RUN_CLEANUP is actually True
+                log(f"[SIMULATED] Rename: {d} -> {clean_name}")
 
     # PHASE 3: HASHING
     # Creates a global manifest mapping MD5 hashes to file paths for deduplication.
