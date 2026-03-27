@@ -1,0 +1,14 @@
+{
+    "EXE_7Z": "C:\\Program Files\\7-Zip\\7z.exe",
+    "MANIFEST_PATH": "C:\\Users\\Friend\\Documents\\global_manifest.json",
+    "SEARCH_ROOT": "D:\\My3DFiles",
+    "REDUN_ROOT": "E:\\3D_Archive_Backup",
+    "INVENTORY_PATH": "D:\\My3DFiles\\Library_Inventory.txt",
+    "PRIORITY_ROOTS": [
+        "D:\\My3DFiles\\Final_Prints",
+        "D:\\My3DFiles\\Sorted_Library"
+    ],
+    "MAX_WORKERS": 8,
+    "DRY_RUN_CLEANUP": true,
+    "DRY_RUN_LINKING": true
+}
