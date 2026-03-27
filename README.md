@@ -1,48 +1,40 @@
 # 3D-Printing-Library-Optimizer-for-Archives
-This utility manages large scale 3D printing libraries by automating decompression, deduplication, and archival processes. It ensures data integrity through MD5 verification and optimizes physical storage via hardlinking.
 
-Project Documentation
-Managing a growing collection of 3D models can quickly lead to storage exhaustion and organizational chaos. This tool provides a professional pipeline to transition a library from raw archives into a clean, searchable, and storage-efficient state.
+This utility manages large-scale 3D printing libraries by automating decompression, deduplication, and archival processes. It ensures data integrity through MD5 verification and optimizes physical storage via hardlinking.
 
-System Requirements
-Before utilizing the optimizer, ensure the following prerequisites are met:
+This pipeline is designed to take a messy 3D printing library (full of zips, duplicates, and nested folders) and turn it into a clean, deduplicated, and searchable archive.
 
-Python 3.8 or higher installed on the system.
+## ✨ Features
 
-7-Zip installed at the default directory or a known custom path.
+1.  **Unpack & Mirror**: Automatically extracts archives and moves the original zips to a safety redundant folder.
+2.  **Flattening**: Detects and removes "Double Nesting" (e.g., `Folder/Folder/file.stl` becomes `Folder/file.stl`).
+3.  **DNA Hashing**: Scans every file to identify identical models, even if they have different names.
+4.  **Hardlink Dedupe**: Replaces duplicate files with **Hard Links**, saving GBs of space without breaking your existing folder structure.
+5.  **Inventory Map**: Generates a categorized text file so you can find models instantly without opening a massive 7z archive.
 
-Administrative privileges for the terminal to allow for Hard Link creation.
+## 🚀 Setup
 
-Sufficient storage space on the target volume for the expanded data (the "DNA").
+1.  **Install Python**: Ensure Python 3.8+ is installed.
+2.  **Install 7-Zip**: The script uses the 7-Zip executable for extraction.
+3.  **Configure**: Edit `config.json` with your own paths.
+    * `SEARCH_ROOT`: Where your files are currently stored.
+    * `REDUN_ROOT`: Where the original archives will be moved for safety.
+    * `PRIORITY_ROOTS`: Folders you want to keep as the "Originals" (e.g., your cleaned/sorted folders).
+4.  **Dry Run**: Keep `DRY_RUN_CLEANUP` and `DRY_RUN_LINKING` as `true` for the first run to verify the output in the log.
+5.  **Execute**: Open a terminal as **Administrator** and run:
+    ```bash
+    python omni_archive_pro.py
+    ```
 
-Configuration Procedures
-The utility relies on a configuration file to define environment variables without requiring code modifications.
+## 📦 Post-Processing
+After the script finishes, use 7-Zip to compress your cleaned `SEARCH_ROOT` into a **Solid 7z Archive** with **Ultra** settings for maximum storage efficiency.
 
-Create a file named config.json in the root directory of the script.
+### Recommended 7z Settings:
+* **Compression Level:** Ultra
+* **Dictionary Size:** 512 MB (for 32GB RAM)
+* **Solid Block Size:** 4 GB
+* **Threads:** Max (e.g., 14)
 
-Input the path to the 7-Zip executable in the EXE_7Z field.
+---
 
-Define the SEARCH_ROOT as the directory containing the files to be processed.
-
-Set the REDUN_ROOT to a separate path or drive intended for the safety backup of original archives.
-
-List folders in the PRIORITY_ROOTS array to establish which directories should be treated as the "Master" locations during deduplication.
-
-Verify that DRY_RUN_CLEANUP and DRY_RUN_LINKING are set to true for initial testing.
-
-Save the config.json file.
-
-Execution Sequence
-Follow these steps to perform the optimization pipeline:
-
-Open a terminal or PowerShell window as Administrator.
-
-Navigate to the directory containing the script.
-
-Execute the command python omni_archive_pro.py.
-
-Review the omni_final.log to inspect simulated changes and confirm path accuracy.
-
-Modify the config.json to set the dry run variables to false once the log is verified.
-
-Run the script again to finalize the library modifications.
+**Note:** Always run as Administrator on Windows to ensure the script has permissions to create hard links.
